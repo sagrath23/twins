@@ -20,50 +20,55 @@ class App extends Component {
       return (value%2 === 0)
     }
 
-    const swapEven = (string, pivot, position) => {
-      const evenPosition = ((2*position)+1)
-      if(checkEven(pivot + 1) && checkEven(evenPosition + 1)) {
-        let tempArr = string.split("")
-        let temp = tempArr[pivot]
-        tempArr[pivot] = tempArr[evenPosition]
-        tempArr[evenPosition] = temp
-        return tempArr.join("")
-      } 
+    const splitEven = (string) => {
+      const result = []
+      string.split('').map((char, index) => {
+        const test = checkEven(index)
+        if(test) {
+          result.push(char)
+        }
+        return test
+      })
+      return result
     }
 
-    const swapOdd = (string, pivot, position) => {
-      const oddPosition = ((2*position))
-      if(!checkEven(pivot + 1) && !checkEven(oddPosition + 1)) {
-        let tempArr = string.split("")
-        let temp = tempArr[pivot]
-        tempArr[pivot] = tempArr[oddPosition]
-        tempArr[oddPosition] = temp
-        return tempArr.join("")
-      }
+    const splitOdd = (string) => {
+      const result = []
+      string.split('').map((char, index) => {
+        const test = !checkEven(index)
+        if(test) {
+          result.push(char)
+        }
+        return test
+      })
+      return result
     }
-
+        
     const checkTwinsStrings = (originString, destinationString) => {
       // check sizes
       if(originString.length === destinationString.length) {
-        let pivot = 0
-        let positionOdd = 1
-        let positionEven = 1
-        let result = originString
-        while (result !== destinationString && pivot <= Math.round(originString.length/2)) {
-          if(checkEven(pivot + 1)){
-            result = swapEven(result, pivot, positionEven)
-            positionEven++
-          } else {
-            result = swapOdd(result, pivot, positionOdd)
-            positionOdd++
-          }
-          pivot++
-        }
-        if(result === destinationString){
+        //split strings in even & odd indexes, and order them
+        const originStringEven = splitEven(originString).sort()
+        const originStringOdd = splitOdd(originString).sort()
+
+        const destinationStringEven = splitEven(destinationString).sort()
+        const destinationStringOdd = splitOdd(destinationString).sort()
+
+        //And test if arrays are equals
+        const testEven = originStringEven.every((char, index) => {
+          return char === destinationStringEven[index]
+        })
+
+        const testOdd = originStringOdd.every((char, index) => {
+          return char === destinationStringOdd[index]
+        })
+
+        if(testEven && testOdd){
           return 'YES'
         } else {
           return 'NO'
         }
+
       } else {
         return 'NO'
       }
